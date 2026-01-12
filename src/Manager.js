@@ -1,7 +1,7 @@
 const { EventEmitter } = require('node:events');
 const { setTimeout, setInterval } = require('node:timers');
 const { writeFile, readFile, access } = require('node:fs/promises');
-
+const { GatewayIntentBits } = require('discord.js');
 const Discord = require('discord.js');
 const serialize = require('serialize-javascript');
 const { deepmerge } = require('deepmerge-ts');
@@ -32,14 +32,16 @@ class GiveawaysManager extends EventEmitter {
      */
     constructor(client, options, init = true) {
         super();
-        if (!client?.options) throw new Error(`Client is a required option. (val=${client})`);
-        if (
-            !new Discord.IntentsBitField(client.options.intents).has(
-                Discord.IntentsBitField.Flags.GuildMessageReactions
-            )
-        ) {
-            throw new Error('Client is missing the "GuildMessageReactions" intent.');
-        }
+
+if (!client?.options) {
+    throw new Error(`Client is a required option. (val=${client})`);
+}
+
+if (
+    !client.options.intents.has(GatewayIntentBits.GuildMessageReactions)
+) {
+    throw new Error('Client is missing the "GuildMessageReactions" intent.');
+}
 
         /**
          * The Discord Client
